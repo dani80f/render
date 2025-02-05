@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<h1>Hola, <span th:text="${usuario}"></span></h1>
+<h2>Lista de Tareas</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr th:each="tarea : ${tareas}">
+        <td th:text="${tarea.titulo}"></td>
+        <td th:text="${tarea.descripcion}"></td>
+
+        <td>
+
+            <form th:action="@{/eliminarTarea}" method="post" style="display:inline;">
+
+                <input type="hidden" name="titulo" th:value="${tarea.titulo}">
+                <button type="submit">Eliminar</button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+
+    </tbody>
+
+</table>
+
+<h2>Añadir Nueva Tarea</h2>
+
+<form th:action="@{/anadirTarea}" method="post">
+
+    <label for="titulo">Título:</label>
+    <input type="text" id="titulo" name="titulo" required><br><br>
+    <label for="descripcion">Descripción:</label>
+    <textarea id="descripcion" name="descripcion" rows="3" cols="30" required></textarea><br><br>
+    <button type="submit">Añadir Tarea</button>
+
+</form>
+
+
+</body>
+</html>
