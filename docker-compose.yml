@@ -1,23 +1,48 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  db:
+  mysql:
     image: mysql:8.0
     container_name: mysql_db
     environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_DATABASE: gestion_tareas
-      MYSQL_USER: root
-      MYSQL_PASSWORD: ""
+      MYSQL_ROOT_PASSWORD: ""  # Sin contraseña para el usuario root
+      MYSQL_DATABASE: gestion_tareas  # Base de datos que se creará
     ports:
-      - "3306:3306"
-  app:
-    image: spring-boot-docker
+      - "3307:3306"  # Exponer el puerto 3306 del contenedor al 3307 de la máquina local
+    networks:
+      - mynetwork
+    volumes:
+      - mysql-data:/var/lib/mysql  # Persistencia de datos para MySQL
+
+  proyecto:
+    build: .  # Asume que tienes un Dockerfile en la raíz del proyecto
     container_name: spring_boot_app
-    depends_on:
-      - db
     ports:
-      - "8080:8080"
+      - "8080:8080"  # Exponer el puerto 8080 de la aplicación Spring Boot
+    depends_on:
+      - mysql  # Garantiza que MySQL se levante antes que la aplicación
+    networks:
+      - mynetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8081:80"  # Exponer phpMyAdmin en el puerto 8081
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gestion_tareas
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ""
+      PMA_HOST: mysql  # Conectar a la base de datos MySQL usando el nombre del servicio
+      PMA_PORT: 3306  # Puerto de MySQL dentro del contenedor
+      PMA_USER: root  # Usuario root
+      PMA_PASSWORD: ""  # Sin contraseña para el usuario root
+    depends_on:
+      - mysql  # Dependencia de MySQL
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
