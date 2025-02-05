@@ -29,7 +29,7 @@ public class TareaController {
 
     public String agregarTarea(@RequestParam("titulo") String titulo,
                                @RequestParam("descripcion") String descripcion) {
-        tareaRepository.save(new Tarea(null, titulo, descripcion));
+        tareaRepository.save(new Tarea( titulo, descripcion));
         return "redirect:/tareas";
 
     }
